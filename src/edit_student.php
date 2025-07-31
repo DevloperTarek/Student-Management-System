@@ -1,22 +1,16 @@
 <?php
-// এখানে আপনার ডেটাবেজ কানেকশন কোড থাকবে, যেমন:
-// include 'db_connection.php';
-// $conn = new mysqli($servername, $username, $password, $dbname);
-// যদি db_connection.php ফাইল না থাকে, তাহলে এখানে আপনার $conn ভেরিয়েবলটি ইনিশিয়েট করে নিতে হবে।
-// উদাহরণস্বরূপ:
 include 'config.php';
 
-$students_res = null; // $students_res কে ইনিশিয়ালি null সেট করা হয়েছে, যাতে আইডি না থাকলে এরর না দেয়।
+$students_res = null;
 
 if (isset($_GET['id'])) {
     $student_id = $_GET['id'];
-    // SQL ইনজেকশন থেকে বাঁচতে prepared statement ব্যবহার করা ভালো
     $stmt = $conn->prepare("SELECT * FROM Students WHERE id = ?");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $students_res = $result->fetch_assoc();
-    $stmt->close(); // স্টেটমেন্ট ক্লোজ করা
+    $stmt->close(); 
 }
 
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
@@ -25,13 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $roll = $_POST['Roll'];
     $class = $_POST['cls'];
 
-    // SQL ইনজেকশন থেকে বাঁচতে এখানেও prepared statement ব্যবহার করা হয়েছে
     $stmt = $conn->prepare("UPDATE Students SET name = ?, roll = ?, class = ? WHERE id = ?");
-    $stmt->bind_param("sssi", $name, $roll, $class, $id); // s = string, i = integer
+    $stmt->bind_param("sssi", $name, $roll, $class, $id); 
     $stmt->execute();
-    $stmt->close(); // স্টেটমেন্ট ক্লোজ করা
+    $stmt->close(); 
 
-    $conn->close(); // ডেটাবেজ কানেকশন বন্ধ করা
+    $conn->close(); 
     header("Location:index.php");
     exit();
 }
